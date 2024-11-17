@@ -88,7 +88,7 @@ export const TodoForm = () => {
       <Button
         onClick={handleAddTodo}
         variant="soft"
-        color="warning"
+        color="primary"
         sx={{ mb: 2 }}
       >
         Agregar Tarea
