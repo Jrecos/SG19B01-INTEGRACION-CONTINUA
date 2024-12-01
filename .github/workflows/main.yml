@@ -9,6 +9,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: 5432
       TEST_ENV: true
     steps:
       - name: Configurar repositorio
