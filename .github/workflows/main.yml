@@ -1,9 +1,9 @@
 name: Unit Test Workflow
 
 on:
-  push:         # el trigger q dispara es decir en push
+  push:         # El trigger que dispara, en este caso, un push
     branches:
-      - main    # las ramas q se ejecuta
+      - main    # Las ramas donde se ejecutará este workflow
 
 jobs:
   build:
@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Clonar el repositorio
-        uses: actions/checkout@v3  # Clona el repo, bien podría ser ejecutar un Linter o cualquier otro action
+        uses: actions/checkout@v3  # Clona el repositorio
 
-        - name: Decir Hola Mundo
+      - name: Decir Hola Mundo
         run: echo "Hola Mundo desde GitHub Actions 🚀"
