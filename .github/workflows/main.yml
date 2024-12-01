@@ -14,6 +14,10 @@ jobs:
       - name: Configurar repositorio
         uses: actions/checkout@v3
       - name: Instalar dependencias
-        run: pip install -r requirements.txt
+        run: |
+          cd backend  # Cambiar al directorio de la aplicación
+          pip install -r requirements.txt
       - name: Ejecutar pruebas
-        run: pytest
+        run: |
+          cd backend  # Cambiar al directorio de la aplicación
+          pytest      # Ejecutar las pruebas
