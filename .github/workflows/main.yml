@@ -18,11 +18,19 @@ jobs:
     steps:
       - name: Configurar repositorio
         uses: actions/checkout@v3
+      
       - name: Instalar dependencias
         run: |
           cd backend  # Cambiar al directorio de la aplicación
           pip install -r requirements.txt
-      - name: Ejecutar pruebas
+      
+      - name: Ejecutar pruebas y generar cobertura
         run: |
           cd backend  # Cambiar al directorio de la aplicación
-          pytest      # Ejecutar las pruebas
+          TEST_ENV=true pytest --cov=app --cov-report=xml  # Generar reporte de cobertura en formato XML
+          
+      - name: Subir cobertura a Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./backend/coverage.xml  # Ruta al archivo XML de cobertura generado
+          token: ${{ secrets.CODECOV_TOKEN }}
