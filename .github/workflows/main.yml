@@ -6,12 +6,14 @@ on:
       - main    # Las ramas donde se ejecutará este workflow
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
+    env:
+      TEST_ENV: true
     steps:
-      - name: Clonar el repositorio
-        uses: actions/checkout@v3  # Clona el repositorio
-
-      - name: Decir Hola Mundo
-        run: echo "Hola Mundo desde GitHub Actions 🚀"
+      - name: Configurar repositorio
+        uses: actions/checkout@v3
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+      - name: Ejecutar pruebas
+        run: pytest

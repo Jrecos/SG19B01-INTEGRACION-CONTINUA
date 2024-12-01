@@ -2,3 +2,6 @@ fastapi[standard]
 uvicorn
 psycopg2-binary
 python-dotenv
+pytest
+pytest-cov
+pytest-mock
