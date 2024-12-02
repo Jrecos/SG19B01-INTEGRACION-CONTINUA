@@ -135,8 +135,9 @@ def get_todos():
         rows = execute_select_query(query)
         return [{"id": row[0], "todo": row[1], "completed": bool(row[2])} for row in rows]
     except Exception as e:
+
         sentry_sdk.capture_exception(e)  # Capture exception in Sentry
-        raise
+        raise ValueError(e)
 
 
 
@@ -167,7 +168,7 @@ def update_todo(id: int, todo: TodoIn):
         return {"id": updated_todo[0][0], "todo": updated_todo[0][1], "completed": bool(updated_todo[0][2])}
     except Exception as e:
         sentry_sdk.capture_exception(e)  # Capture exception in Sentry
-        raise
+        raise ValueError(e)
 
 
 # Execute SELECT queries
@@ -181,7 +182,7 @@ def execute_select_query(query: str, params: Optional[List[Any]] = None) -> List
         return result
     except Exception as e:
         sentry_sdk.capture_exception(e)  # Capture exception in Sentry
-        raise
+        raise ValueError(e)
 
 
 # Execute INSERT, UPDATE, DELETE queries
@@ -194,4 +195,5 @@ def execute_modify_query(query: str, params: Optional[List[Any]] = None) -> None
             cursor.close()
     except Exception as e:
         sentry_sdk.capture_exception(e)  # Capture exception in Sentry
-        raise
+        raise ValueError(e)
+
