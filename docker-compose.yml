@@ -9,17 +9,27 @@ services:
       POSTGRES_DB: mydatabase
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: ./backend
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydatabase
+      POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
+      SENTRY_DSN: "https://f67f242e115d14ecc9e2abc53239c2ce@o4508400692953088.ingest.us.sentry.io/4508400906862592"
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+
   frontend:
     build: ./frontend
     ports:
