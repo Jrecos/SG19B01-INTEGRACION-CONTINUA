@@ -1,6 +1,17 @@
 name: Unit Test Workflow
 
 on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
   push:         # El trigger que dispara, en este caso, un push
     branches:
       - main    # Las ramas donde se ejecutará este workflow
