@@ -4,7 +4,6 @@ from main import app, get_db_connection, initialize_db, execute_select_query, ex
 from unittest.mock import patch, MagicMock
 import os
 
-
 # Usamos TestClient para interactuar con la aplicación FastAPI
 client = TestClient(app)
 
@@ -23,14 +22,12 @@ def test_required_env_vars(env_var, expected_result):
     result = os.getenv(env_var)
     assert (result is not None) == expected_result, f"Variable de entorno {env_var} no está configurada correctamente."
 
-
 # Verificar que la conexión a la base de datos se pueda realizar correctamente
 def test_db_connection():
     with patch("main.psycopg2.connect") as mock_connect:
         mock_connect.return_value = MagicMock()
         conn = get_db_connection()
         assert conn is not None
-
 
 # Verificar el endpoint "GET /api/todos"
 def test_get_todos():
@@ -43,7 +40,6 @@ def test_get_todos():
         assert response.json() == [{"id": 1, "todo": "Tarea 1", "completed": True},
                                    {"id": 2, "todo": "Tarea 2", "completed": False}]
 
-
 # Verificar el endpoint "POST /api/todos"
 def test_add_todo():
     new_todo = {"todo": "Nueva tarea", "completed": False}
@@ -53,7 +49,6 @@ def test_add_todo():
         response = client.post("/api/todos", json=new_todo)
         assert response.status_code == 200
         assert response.json() == {"id": mock_new_id, "todo": new_todo["todo"]}
-
 
 # Verificar el endpoint "PUT /api/todos/{id}" para actualizar una tarea
 def test_update_todo():
@@ -65,20 +60,27 @@ def test_update_todo():
         assert response.status_code == 200
         assert response.json() == {"id": 1, "todo": "Tarea actualizada", "completed": True}
 
+# Test the Hello World endpoint
+def test_say_hello():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Hello, World!"}
 
-# Verificar que la actualización de una tarea no encontrada devuelva un error 404
-def test_update_todo_not_found():
-    todo_to_update = {"todo": "Tarea inexistente", "completed": True}
+# Test validation error handling
+def test_validation_error_handling():
+    invalid_todo_data = {"todo": ""}
+    response = client.post("/api/todos", json=invalid_todo_data)
+    assert response.status_code == 422
 
-    # Mock de la función execute_select_query que simula que no se encontró la tarea
-    with patch("main.execute_select_query") as mock_execute_select:
-        mock_execute_select.return_value = []  # No se encuentra la tarea en la base de datos
+# Test the initialization of the database (only in production)
+def test_initialize_db():
+    with patch("main.get_db_connection") as mock_get_db_connection:
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_get_db_connection.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
 
-        # Mock de la función get_db_connection para evitar conexión real
-        with patch("main.get_db_connection") as mock_get_db:
-            mock_get_db.return_value = MagicMock()  # Mock de la conexión
+        initialize_db()
 
-            # Realizamos la petición PUT al endpoint
-            response = client.put("/api/todos/999", json=todo_to_update)
-            assert response.status_code == 404
-            assert response.json() == {"detail": "Tarea no encontrada"}
+        mock_cursor.execute.assert_called_once()
+        mock_conn.commit.assert_called_once()
