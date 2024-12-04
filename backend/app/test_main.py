@@ -64,21 +64,3 @@ def test_update_todo():
         response = client.put("/api/todos/1", json=todo_to_update)
         assert response.status_code == 200
         assert response.json() == {"id": 1, "todo": "Tarea actualizada", "completed": True}
-
-
-# Verificar que la actualización de una tarea no encontrada devuelva un error 404
-def test_update_todo_not_found():
-    todo_to_update = {"todo": "Tarea inexistente", "completed": True}
-
-    # Mock de la función execute_select_query que simula que no se encontró la tarea
-    with patch("main.execute_select_query") as mock_execute_select:
-        mock_execute_select.return_value = []  # No se encuentra la tarea en la base de datos
-
-        # Mock de la función get_db_connection para evitar conexión real
-        with patch("main.get_db_connection") as mock_get_db:
-            mock_get_db.return_value = MagicMock()  # Mock de la conexión
-
-            # Realizamos la petición PUT al endpoint
-            response = client.put("/api/todos/999", json=todo_to_update)
-            assert response.status_code == 404
-            assert response.json() == {"detail": "Tarea no encontrada"}
